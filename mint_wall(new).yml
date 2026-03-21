@@ -1,6 +1,6 @@
 ---
 - name: Set and Lock Wallpaper for All Users
-  hosts: Test-Batch1
+  hosts: DPDYPHGFUN10017
   become: yes
   gather_facts: true
 
