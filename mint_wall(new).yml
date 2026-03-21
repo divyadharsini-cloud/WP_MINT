@@ -1,6 +1,6 @@
 ---
 - name: Set and Lock Wallpaper for All Users (Linux Mint Cinnamon & GNOME)
-  hosts: DPDYPHGFU010022
+  hosts: ansibletesting
   become: yes
   gather_facts: true   # required to detect desktop environment
 
