@@ -1,6 +1,6 @@
 ---
 - name: Set and Lock Wallpaper for All Users
-  hosts: ansibletesting
+  hosts: DPDYPHGFU010013
   become: yes
   gather_facts: true
 
