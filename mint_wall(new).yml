@@ -1,15 +1,15 @@
 ---
-- name: Set and Lock Wallpaper for All Users
+- name: Set and Lock Wallpaper for All Users (Linux Mint Cinnamon & GNOME)
   hosts: ansibletesting
   become: yes
-  gather_facts: true
+  gather_facts: true   # required to detect desktop environment
 
   vars:
-    wallpaper_path: "/usr/share/mywallpapers/Test.jpg"
+    desktop_schema: "{{ 'org.cinnamon.desktop.background' if ansible_facts['env']['XDG_CURRENT_DESKTOP'] is defined and 'Cinnamon' in ansible_facts['env']['XDG_CURRENT_DESKTOP'] else 'org.gnome.desktop.background' }}"
 
   tasks:
 
-    - name: Ensure wallpaper directory exists
+    - name: Ensure /usr/share/mywallpapers directory exists
       file:
         path: /usr/share/mywallpapers
         state: directory
@@ -17,55 +17,55 @@
         group: root
         mode: '0755'
 
-    - name: Copy wallpaper
+    - name: Copy wallpaper to /usr/share/mywallpapers/Test.jpg
       copy:
         src: "Desktop_Wallpaper_Week_15.jpg"
-        dest: "{{ wallpaper_path }}"
+        dest: "/usr/share/mywallpapers/Test.jpg"
         owner: root
         group: root
         mode: '0644'
 
-    - name: Create dconf directories
+    - name: Set permissions so only root can change wallpaper file
       file:
-        path: "{{ item }}"
+        path: /usr/share/mywallpapers/Test.jpg
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Create dconf config directory
+      file:
+        path: "/etc/dconf/db/local.d"
         state: directory
         mode: '0755'
-      loop:
-        - /etc/dconf/db/local.d
-        - /etc/dconf/db/local.d/locks
-        - /etc/dconf/profile
 
-    # 🔹 GNOME
-    - name: Set GNOME wallpaper
+    - name: Create dconf lock directory
+      file:
+        path: "/etc/dconf/db/local.d/locks"
+        state: directory
+        mode: '0755'
+
+    - name: Ensure /etc/dconf/profile directory exists
+      file:
+        path: "/etc/dconf/profile"
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Set system-wide default wallpaper
       copy:
-        dest: "/etc/dconf/db/local.d/00-wallpaper-gnome"
+        dest: "/etc/dconf/db/local.d/00-wallpaper"
         content: |
-          [org/gnome/desktop/background]
-          picture-uri='file://{{ wallpaper_path }}'
+          [{{ desktop_schema | replace('.', '/') }}]
+          picture-uri='file:///usr/share/mywallpapers/Test.jpg'
           picture-options='zoom'
 
-    - name: Lock GNOME wallpaper
+    - name: Lock wallpaper settings so users cannot change them
       copy:
-        dest: "/etc/dconf/db/local.d/locks/gnome-background"
+        dest: "/etc/dconf/db/local.d/locks/desktop-background"
         content: |
-          /org/gnome/desktop/background/picture-uri
-          /org/gnome/desktop/background/picture-options
-
-    # 🔹 Cinnamon (Linux Mint)
-    - name: Set Cinnamon wallpaper
-      copy:
-        dest: "/etc/dconf/db/local.d/00-wallpaper-cinnamon"
-        content: |
-          [org/cinnamon/desktop/background]
-          picture-uri='file://{{ wallpaper_path }}'
-          picture-options='zoom'
-
-    - name: Lock Cinnamon wallpaper
-      copy:
-        dest: "/etc/dconf/db/local.d/locks/cinnamon-background"
-        content: |
-          /org/cinnamon/desktop/background/picture-uri
-          /org/cinnamon/desktop/background/picture-options
+          /{{ desktop_schema | replace('.', '/') }}/picture-uri
+          /{{ desktop_schema | replace('.', '/') }}/picture-options
 
     - name: Ensure dconf profile exists
       copy:
@@ -77,15 +77,16 @@
     - name: Update dconf database
       command: dconf update
 
-    # Optional (best effort)
-    - name: Apply wallpaper to logged-in users (non-fatal)
+    - name: Force wallpaper for active user sessions
       shell: |
-        for uid in $(ls /run/user | grep -E '^[0-9]+$'); do
-          user=$(id -nu $uid)
+        for user in $(who | awk '{print $1}' | sort -u); do
+          uid=$(id -u $user)
+          export DISPLAY=:0
+          sudo -u "$user" \
           DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$uid/bus" \
-          sudo -u "$user" gsettings set org.gnome.desktop.background picture-uri "file://{{ wallpaper_path }}" || true
-
+          gsettings set {{ desktop_schema }} picture-uri 'file:///usr/share/mywallpapers/Test.jpg'
+          sudo -u "$user" \
           DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$uid/bus" \
-          sudo -u "$user" gsettings set org.cinnamon.desktop.background picture-uri "file://{{ wallpaper_path }}" || true
+          gsettings set {{ desktop_schema }} picture-options 'zoom'
         done
       ignore_errors: yes
