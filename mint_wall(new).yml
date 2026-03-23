@@ -1,5 +1,5 @@
 - name: Set and Enforce Wallpaper Based on Desktop Environment
-  hosts: 	Test-Batch1
+  hosts: Test-Batch1
   become: yes
   gather_facts: false
 
