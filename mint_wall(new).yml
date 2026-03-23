@@ -1,10 +1,10 @@
 - name: Set and Enforce Wallpaper Based on Desktop Environment
-  hosts: DPDYPHGFU010016
+  hosts: Test-Batch1
   become: yes
   gather_facts: false
 
   vars:
-    wallpaper_src: "Desktop_Wallpaper_Week_15.jpg"
+    wallpaper_src: "pdy-wallpaper.jpg"
     wallpaper_path: "/usr/share/mywallpapers/Test.jpg"
 
   tasks:
