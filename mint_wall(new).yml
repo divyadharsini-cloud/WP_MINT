@@ -112,7 +112,7 @@
     # =========================
     # 4. XFCE (Enforce at Login)
     # =========================
-    - name: Configure XFCE login enforcement
+    - name: Configure XFCE wallpaper enforcement
       when: xfce_check.stat.exists
       block:
 
@@ -122,14 +122,27 @@
             state: directory
             mode: '0755'
 
-        - name: Create XFCE wallpaper script
+        - name: Create XFCE wallpaper enforcement script
           copy:
             dest: /usr/local/bin/set-xfce-wallpaper.sh
             mode: '0755'
             content: |
               #!/bin/bash
-              xfconf-query -c xfce4-desktop -l | grep last-image | while read prop; do
-                xfconf-query -c xfce4-desktop -p "$prop" -s "{{ wallpaper_path }}"
+
+              WALL="{{ wallpaper_path }}"
+
+              while true; do
+                  xfconf-query -c xfce4-desktop -l | grep last-image | while read prop; do
+
+                      CURRENT=$(xfconf-query -c xfce4-desktop -p "$prop" 2>/dev/null)
+
+                      if [ "$CURRENT" != "$WALL" ]; then
+                          xfconf-query -c xfce4-desktop -p "$prop" -s "$WALL"
+                      fi
+
+                  done
+
+                  sleep 5
               done
 
         - name: Create autostart entry for XFCE
@@ -139,7 +152,7 @@
             content: |
               [Desktop Entry]
               Type=Application
-              Name=Set XFCE Wallpaper
+              Name=XFCE Wallpaper Lock
               Exec=/usr/local/bin/set-xfce-wallpaper.sh
               OnlyShowIn=XFCE;
               X-GNOME-Autostart-enabled=true
