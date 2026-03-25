@@ -1,5 +1,5 @@
 - name: Detect Desktop Environment with User
-  hosts: Test-Batch1
+  hosts: ansibletesting
   become: yes
   gather_facts: false
 
