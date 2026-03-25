@@ -1,5 +1,5 @@
 - name: Detect Desktop Environment (Process Based)
-  hosts: Cornea-op
+  hosts: Glaucoma-op
   become: yes
   gather_facts: false
 
