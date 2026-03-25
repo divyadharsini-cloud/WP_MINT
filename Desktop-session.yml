@@ -1,0 +1,27 @@
+- name: Detect Desktop Environment with User
+  hosts: Test-Batch1
+  become: yes
+  gather_facts: false
+
+  tasks:
+
+    - name: Get session and user
+      shell: "loginctl list-sessions --no-legend | awk '$3 != \"gdm\" && $3 != \"lightdm\" {print $1, $3}' | head -n 1"
+      register: session_info
+
+    - name: Set session facts
+      set_fact:
+        session_id: "{{ session_info.stdout.split()[0] }}"
+        active_user: "{{ session_info.stdout.split()[1] }}"
+
+    - name: Get desktop environment
+      command: "loginctl show-session {{ session_id }} -p Desktop"
+      register: desktop_raw
+
+    - name: Extract desktop name
+      set_fact:
+        desktop_env: "{{ desktop_raw.stdout.split('=')[1] | lower }}"
+
+    - name: Show result
+      debug:
+        msg: "User={{ active_user }}, Desktop={{ desktop_env }}"
