@@ -1,0 +1,79 @@
+- name: Set and Lock Wallpaper ONLY for Cinnamon
+  hosts: Tirumangalam
+  become: yes
+  gather_facts: false
+
+  vars:
+    wallpaper_src: "pdy-wallpaper.jpg"
+    wallpaper_path: "/usr/share/mywallpapers/Test.jpg"
+
+  tasks:
+
+    # =========================
+    # 1. Copy Wallpaper
+    # =========================
+    - name: Ensure wallpaper directory exists
+      file:
+        path: /usr/share/mywallpapers
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Copy wallpaper to system
+      copy:
+        src: "{{ wallpaper_src }}"
+        dest: "{{ wallpaper_path }}"
+        owner: root
+        group: root
+        mode: '0644'
+
+    # =========================
+    # 2. Check Cinnamon Installed
+    # =========================
+    - name: Check Cinnamon
+      stat:
+        path: /usr/bin/cinnamon
+      register: cinnamon_check
+
+    # =========================
+    # 3. Apply ONLY if Cinnamon exists
+    # =========================
+    - name: Configure Cinnamon wallpaper and lock
+      when: cinnamon_check.stat.exists
+      block:
+
+        - name: Create dconf directories
+          file:
+            path: "{{ item }}"
+            state: directory
+            mode: '0755'
+          loop:
+            - /etc/dconf/db/local.d
+            - /etc/dconf/db/local.d/locks
+            - /etc/dconf/profile
+
+        - name: Set Cinnamon wallpaper
+          copy:
+            dest: /etc/dconf/db/local.d/00-cinnamon-wallpaper
+            content: |
+              [org/cinnamon/desktop/background]
+              picture-uri='file://{{ wallpaper_path }}'
+              picture-options='zoom'
+
+        - name: Lock Cinnamon wallpaper
+          copy:
+            dest: /etc/dconf/db/local.d/locks/cinnamon-wallpaper
+            content: |
+              /org/cinnamon/desktop/background/picture-uri
+              /org/cinnamon/desktop/background/picture-options
+
+        - name: Ensure dconf profile exists
+          copy:
+            dest: /etc/dconf/profile/user
+            content: |
+              user-db:user
+              system-db:local
+
+        - name: Update dconf database
+          command: dconf update
