@@ -1,0 +1,84 @@
+- name: Set Wallpaper ONLY for XFCE
+  hosts: Batch-2, DMDUPH4FFRET012
+  become: yes
+  gather_facts: false
+
+  vars:
+    wallpaper_src: "pdy-wallpaper.jpg"
+    wallpaper_path: "/usr/share/mywallpapers/Test.jpg"
+
+  tasks:
+
+    # =========================
+    # 1. Copy Wallpaper
+    # =========================
+    - name: Ensure wallpaper directory exists
+      file:
+        path: /usr/share/mywallpapers
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Copy wallpaper to system
+      copy:
+        src: "{{ wallpaper_src }}"
+        dest: "{{ wallpaper_path }}"
+        owner: root
+        group: root
+        mode: '0644'
+
+    # =========================
+    # 2. Check XFCE Installed
+    # =========================
+    - name: Check XFCE
+      stat:
+        path: /usr/bin/xfce4-session
+      register: xfce_check
+
+    # =========================
+    # 3. Apply ONLY if XFCE exists
+    # =========================
+    - name: Configure XFCE wallpaper
+      when: xfce_check.stat.exists
+      block:
+
+        # Create wallpaper script
+        - name: Create XFCE wallpaper script
+          copy:
+            dest: /usr/local/bin/set-xfce-wallpaper.sh
+            mode: '0755'
+            content: |
+              #!/bin/bash
+              WALLPAPER="{{ wallpaper_path }}"
+
+              # Wait for session to load
+              sleep 5
+
+              xfconf-query -c xfce4-desktop \
+              -p /backdrop/screen0/monitor0/image-path \
+              -s "$WALLPAPER"
+
+        # Create autostart entry
+        - name: Create XFCE autostart entry
+          copy:
+            dest: /etc/xdg/autostart/xfce-wallpaper.desktop
+            mode: '0644'
+            content: |
+              [Desktop Entry]
+              Type=Application
+              Exec=/usr/local/bin/set-xfce-wallpaper.sh
+              Hidden=false
+              NoDisplay=false
+              X-GNOME-Autostart-enabled=true
+              Name=XFCE Wallpaper Setter
+
+        # Optional: Apply immediately (best effort)
+        - name: Apply wallpaper immediately (if session active)
+          shell: |
+            export DISPLAY=:0
+            export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u)/bus
+            xfconf-query -c xfce4-desktop \
+            -p /backdrop/screen0/monitor0/image-path \
+            -s "{{ wallpaper_path }}"
+          ignore_errors: yes
