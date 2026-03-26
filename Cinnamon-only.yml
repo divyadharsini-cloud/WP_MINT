@@ -1,5 +1,5 @@
 - name: Set and Lock Wallpaper ONLY for Cinnamon
-  hosts: IP
+  hosts: FH-1
   become: yes
   gather_facts: false
 
