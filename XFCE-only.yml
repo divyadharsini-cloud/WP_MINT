@@ -1,12 +1,11 @@
-- name: Set XFCE Wallpaper (User-Level - Fully Reliable)
-  hosts: DMDUPHGFMRD0005, DMDUPHGFU010063, DMDUPHGFU010069, DMDUPHGFU010075, DMDUPHGFU020090, DMDUPHGFU020091, DMDUPHGFU040092, DMDUPHUGU030129, DMDUPHUGATN0005, DMDUPHUGUI30009 
+- name: Set XFCE Wallpaper for ALL Users (Enterprise Ready)
+  hosts: DMDUPHGFMRD0005, DMDUPHGFU010063, DMDUPHGFU010069, DMDUPHGFU010075, DMDUPHGFU020090, DMDUPHGFU020091, DMDUPHGFU040092, DMDUPHUGU030129, DMDUPHUGATN0005, DMDUPHUGUI30009
   become: yes
   gather_facts: false
 
   vars:
     wallpaper_src: "pdy-wallpaper.jpg"
     wallpaper_path: "/usr/share/mywallpapers/Test.jpg"
-    target_user: "adminit"
 
   tasks:
 
@@ -17,19 +16,15 @@
       file:
         path: /usr/share/mywallpapers
         state: directory
-        owner: root
-        group: root
         mode: '0755'
 
     # =========================
     # 2. Copy wallpaper
     # =========================
-    - name: Copy wallpaper to system
+    - name: Copy wallpaper
       copy:
         src: "{{ wallpaper_src }}"
         dest: "{{ wallpaper_path }}"
-        owner: root
-        group: root
         mode: '0644'
 
     # =========================
@@ -41,53 +36,61 @@
       register: xfce_check
 
     # =========================
-    # 4. Apply ONLY if XFCE exists
+    # 4. Get all users
     # =========================
-    - name: Configure XFCE wallpaper (user-level autostart)
+    - name: Get users from /home
       when: xfce_check.stat.exists
+      shell: "ls /home"
+      register: users_list
+
+    # =========================
+    # 5. Create script (once)
+    # =========================
+    - name: Create wallpaper script
+      when: xfce_check.stat.exists
+      copy:
+        dest: /usr/local/bin/set-xfce-wallpaper.sh
+        mode: '0755'
+        content: |
+          #!/bin/bash
+
+          WALL="{{ wallpaper_path }}"
+
+          # Wait for XFCE session
+          sleep 10
+
+          xfconf-query -c xfce4-desktop -l | grep last-image | while read prop; do
+              xfconf-query -c xfce4-desktop -p "$prop" -s "$WALL"
+          done
+
+          xfconf-query -c xfce4-desktop -l | grep image-style | while read prop; do
+              xfconf-query -c xfce4-desktop -p "$prop" -s 3
+          done
+
+    # =========================
+    # 6. Apply for ALL users
+    # =========================
+    - name: Setup autostart for all users
+      when: xfce_check.stat.exists
+      loop: "{{ users_list.stdout_lines }}"
+      loop_control:
+        loop_var: user
+
       block:
 
-        # -------------------------
-        # Script (runs inside user session)
-        # -------------------------
-        - name: Create wallpaper script
-          copy:
-            dest: /usr/local/bin/set-xfce-wallpaper.sh
-            mode: '0755'
-            content: |
-              #!/bin/bash
-
-              WALL="{{ wallpaper_path }}"
-
-              # Wait for XFCE session fully ready
-              sleep 10
-
-              # Apply wallpaper to all monitors
-              xfconf-query -c xfce4-desktop -l | grep last-image | while read prop; do
-                  xfconf-query -c xfce4-desktop -p "$prop" -s "$WALL"
-              done
-
-              # Set style (zoom)
-              xfconf-query -c xfce4-desktop -l | grep image-style | while read prop; do
-                  xfconf-query -c xfce4-desktop -p "$prop" -s 3
-              done
-
-        # -------------------------
-        # Create USER autostart (IMPORTANT)
-        # -------------------------
-        - name: Ensure user autostart directory exists
+        - name: Ensure autostart dir exists
           file:
-            path: "/home/{{ target_user }}/.config/autostart"
+            path: "/home/{{ user }}/.config/autostart"
             state: directory
-            owner: "{{ target_user }}"
-            group: "{{ target_user }}"
+            owner: "{{ user }}"
+            group: "{{ user }}"
             mode: '0755'
 
-        - name: Create user autostart entry
+        - name: Create autostart file
           copy:
-            dest: "/home/{{ target_user }}/.config/autostart/set-wallpaper.desktop"
-            owner: "{{ target_user }}"
-            group: "{{ target_user }}"
+            dest: "/home/{{ user }}/.config/autostart/set-wallpaper.desktop"
+            owner: "{{ user }}"
+            group: "{{ user }}"
             mode: '0644'
             content: |
               [Desktop Entry]
