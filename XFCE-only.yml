@@ -1,5 +1,5 @@
 - name: Set Wallpaper ONLY for XFCE
-  hosts: DMDUPHGFMRD0005
+  hosts: ansibletesting
   become: yes
   gather_facts: false
 
@@ -55,10 +55,12 @@
               # Wait for session to load
               sleep 5
 
-              xfconf-query -c xfce4-desktop \
-              -p /backdrop/screen0/monitor0/image-path \
-              -s "$WALLPAPER"
-
+              for path in $(xfconf-query -c xfce4-desktop -l | grep image-path); do
+                  xfconf-query -c xfce4-desktop -p "$path" -s "$WALLPAPER"
+              done
+              for path in $(xfconf-query -c xfce4-desktop -l | grep image-style); do
+                  xfconf-query -c xfce4-desktop -p "$path" -s 3
+              done
         # Create autostart entry
         - name: Create XFCE autostart entry
           copy:
