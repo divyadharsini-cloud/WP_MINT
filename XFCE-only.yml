@@ -40,7 +40,7 @@
     # =========================
     - name: Get users from /home
       when: xfce_check.stat.exists
-      shell: "ls /home"
+      command: ls /home
       register: users_list
 
     # =========================
@@ -68,35 +68,34 @@
           done
 
     # =========================
-    # 6. Apply for ALL users
+    # 6. Ensure autostart dir for each user
     # =========================
-    - name: Setup autostart for all users
+    - name: Ensure autostart dir exists for each user
       when: xfce_check.stat.exists
+      file:
+        path: "/home/{{ item }}/.config/autostart"
+        state: directory
+        owner: "{{ item }}"
+        group: "{{ item }}"
+        mode: '0755'
       loop: "{{ users_list.stdout_lines }}"
-      loop_control:
-        loop_var: user
 
-      block:
-
-        - name: Ensure autostart dir exists
-          file:
-            path: "/home/{{ user }}/.config/autostart"
-            state: directory
-            owner: "{{ user }}"
-            group: "{{ user }}"
-            mode: '0755'
-
-        - name: Create autostart file
-          copy:
-            dest: "/home/{{ user }}/.config/autostart/set-wallpaper.desktop"
-            owner: "{{ user }}"
-            group: "{{ user }}"
-            mode: '0644'
-            content: |
-              [Desktop Entry]
-              Type=Application
-              Name=XFCE Wallpaper Setter
-              Exec=/usr/local/bin/set-xfce-wallpaper.sh
-              OnlyShowIn=XFCE;
-              X-GNOME-Autostart-enabled=true
-              Terminal=false
+    # =========================
+    # 7. Create autostart file for each user
+    # =========================
+    - name: Create autostart file for each user
+      when: xfce_check.stat.exists
+      copy:
+        dest: "/home/{{ item }}/.config/autostart/set-wallpaper.desktop"
+        owner: "{{ item }}"
+        group: "{{ item }}"
+        mode: '0644'
+        content: |
+          [Desktop Entry]
+          Type=Application
+          Name=XFCE Wallpaper Setter
+          Exec=/usr/local/bin/set-xfce-wallpaper.sh
+          OnlyShowIn=XFCE;
+          X-GNOME-Autostart-enabled=true
+          Terminal=false
+      loop: "{{ users_list.stdout_lines }}"
