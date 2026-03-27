@@ -38,9 +38,9 @@
     # =========================
     # 4. Get all users
     # =========================
-    - name: Get users from /home
+    - name: Get valid users (UID >= 1000)
       when: xfce_check.stat.exists
-      command: ls /home
+      shell: awk -F: '$3 >= 1000 && $6 ~ /^\/home\// {print $1}' /etc/passwd
       register: users_list
 
     # =========================
