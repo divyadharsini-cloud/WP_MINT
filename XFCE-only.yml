@@ -1,4 +1,4 @@
-- name: Set Wallpaper ONLY for XFCE (Autostart - Reliable)
+- name: Set XFCE Wallpaper (User-Level - Fully Reliable)
   hosts: ansibletesting
   become: yes
   gather_facts: false
@@ -6,11 +6,12 @@
   vars:
     wallpaper_src: "pdy-wallpaper.jpg"
     wallpaper_path: "/usr/share/mywallpapers/Test.jpg"
+    target_user: "adminit"
 
   tasks:
 
     # =========================
-    # 1. Ensure directory
+    # 1. Ensure wallpaper directory
     # =========================
     - name: Ensure wallpaper directory exists
       file:
@@ -40,16 +41,16 @@
       register: xfce_check
 
     # =========================
-    # 4. Configure XFCE (ONLY if exists)
+    # 4. Apply ONLY if XFCE exists
     # =========================
-    - name: Configure XFCE wallpaper via autostart
+    - name: Configure XFCE wallpaper (user-level autostart)
       when: xfce_check.stat.exists
       block:
 
         # -------------------------
-        # Script (robust version)
+        # Script (runs inside user session)
         # -------------------------
-        - name: Create XFCE wallpaper script
+        - name: Create wallpaper script
           copy:
             dest: /usr/local/bin/set-xfce-wallpaper.sh
             mode: '0755'
@@ -58,37 +59,35 @@
 
               WALL="{{ wallpaper_path }}"
 
-              # Wait until xfconf is available
-              for i in {1..10}; do
-                  xfconf-query -c xfce4-desktop -l >/dev/null 2>&1 && break
-                  sleep 2
-              done
+              # Wait for XFCE session fully ready
+              sleep 10
 
-              # Extra delay to ensure desktop loads
-              sleep 5
-
-              # Apply wallpaper for all monitors
+              # Apply wallpaper to all monitors
               xfconf-query -c xfce4-desktop -l | grep last-image | while read prop; do
                   xfconf-query -c xfce4-desktop -p "$prop" -s "$WALL"
               done
 
-              # Apply style (scaled)
+              # Set style (zoom)
               xfconf-query -c xfce4-desktop -l | grep image-style | while read prop; do
                   xfconf-query -c xfce4-desktop -p "$prop" -s 3
               done
 
         # -------------------------
-        # Autostart entry
+        # Create USER autostart (IMPORTANT)
         # -------------------------
-        - name: Ensure autostart directory exists
+        - name: Ensure user autostart directory exists
           file:
-            path: /etc/xdg/autostart
+            path: "/home/{{ target_user }}/.config/autostart"
             state: directory
+            owner: "{{ target_user }}"
+            group: "{{ target_user }}"
             mode: '0755'
 
-        - name: Create XFCE autostart entry
+        - name: Create user autostart entry
           copy:
-            dest: /etc/xdg/autostart/xfce-wallpaper.desktop
+            dest: "/home/{{ target_user }}/.config/autostart/set-wallpaper.desktop"
+            owner: "{{ target_user }}"
+            group: "{{ target_user }}"
             mode: '0644'
             content: |
               [Desktop Entry]
@@ -97,4 +96,4 @@
               Exec=/usr/local/bin/set-xfce-wallpaper.sh
               OnlyShowIn=XFCE;
               X-GNOME-Autostart-enabled=true
-              X-KDE-autostart-after=panel
+              Terminal=false
