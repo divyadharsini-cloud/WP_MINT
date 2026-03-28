@@ -40,7 +40,7 @@
     # =========================
     - name: Get valid users (UID >= 1000)
       when: xfce_check.stat.exists
-      shell: | 
+      shell: |
         awk -F: '$3 >= 1000 && $6 ~ /^\/home\// {print $1}' /etc/passwd
       register: users_list
 
@@ -100,3 +100,27 @@
           X-GNOME-Autostart-enabled=true
           Terminal=false
       loop: "{{ users_list.stdout_lines }}"
+
+    # =========================
+    # 8. Setup for FUTURE users (IMPORTANT)
+    # =========================
+    - name: Ensure skel autostart directory exists
+      when: xfce_check.stat.exists
+      file:
+        path: /etc/skel/.config/autostart
+        state: directory
+        mode: '0755'
+
+    - name: Add wallpaper autostart for future users
+      when: xfce_check.stat.exists
+      copy:
+        dest: /etc/skel/.config/autostart/set-wallpaper.desktop
+        mode: '0644'
+        content: |
+          [Desktop Entry]
+          Type=Application
+          Name=XFCE Wallpaper Setter
+          Exec=/usr/local/bin/set-xfce-wallpaper.sh
+          OnlyShowIn=XFCE;
+          X-GNOME-Autostart-enabled=true
+          Terminal=false
