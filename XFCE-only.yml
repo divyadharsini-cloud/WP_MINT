@@ -1,5 +1,5 @@
 - name: Set XFCE Wallpaper for ALL Users (Enterprise Ready)
-  hosts: Unit-2&3
+  hosts: ansibletesting
   become: yes
   gather_facts: false
 
@@ -9,44 +9,34 @@
 
   tasks:
 
-    # =========================
     # 1. Ensure wallpaper directory
-    # =========================
     - name: Ensure wallpaper directory exists
       file:
         path: /usr/share/mywallpapers
         state: directory
         mode: '0755'
 
-    # =========================
     # 2. Copy wallpaper
-    # =========================
     - name: Copy wallpaper
       copy:
         src: "{{ wallpaper_src }}"
         dest: "{{ wallpaper_path }}"
         mode: '0644'
 
-    # =========================
     # 3. Check XFCE installed
-    # =========================
     - name: Check XFCE installed
       stat:
         path: /usr/bin/xfce4-session
       register: xfce_check
 
-    # =========================
-    # 4. Get all users
-    # =========================
-    - name: Get valid users (UID >= 1000)
+    # 4. Get ALL users from /home (WORKS for LDAP + local)
+    - name: Get all users from /home
       when: xfce_check.stat.exists
       shell: |
-        awk -F: '$3 >= 1000 && $6 ~ /^\/home\// {print $1}' /etc/passwd
+        ls /home | grep -v 'lost+found'
       register: users_list
 
-    # =========================
-    # 5. Create script (once)
-    # =========================
+    # 5. Create wallpaper script
     - name: Create wallpaper script
       when: xfce_check.stat.exists
       copy:
@@ -54,10 +44,7 @@
         mode: '0755'
         content: |
           #!/bin/bash
-
           WALL="{{ wallpaper_path }}"
-
-          # Wait for XFCE session
           sleep 10
 
           xfconf-query -c xfce4-desktop -l | grep last-image | while read prop; do
@@ -68,10 +55,8 @@
               xfconf-query -c xfce4-desktop -p "$prop" -s 3
           done
 
-    # =========================
     # 6. Ensure autostart dir for each user
-    # =========================
-    - name: Ensure autostart dir exists for each user
+    - name: Ensure autostart dir exists
       when: xfce_check.stat.exists
       file:
         path: "/home/{{ item }}/.config/autostart"
@@ -81,10 +66,8 @@
         mode: '0755'
       loop: "{{ users_list.stdout_lines }}"
 
-    # =========================
     # 7. Create autostart file for each user
-    # =========================
-    - name: Create autostart file for each user
+    - name: Create autostart file
       when: xfce_check.stat.exists
       copy:
         dest: "/home/{{ item }}/.config/autostart/set-wallpaper.desktop"
@@ -101,9 +84,7 @@
           Terminal=false
       loop: "{{ users_list.stdout_lines }}"
 
-    # =========================
-    # 8. Setup for FUTURE users (IMPORTANT)
-    # =========================
+    # 8. Future users
     - name: Ensure skel autostart directory exists
       when: xfce_check.stat.exists
       file:
