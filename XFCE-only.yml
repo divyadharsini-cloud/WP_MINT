@@ -1,5 +1,5 @@
 - name: Set XFCE Wallpaper for ALL Users (Enterprise Ready)
-  hosts: Test-Batch1
+  hosts: DPDYPHGFUN10389
   become: yes
   gather_facts: false
 
