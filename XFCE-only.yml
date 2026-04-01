@@ -1,5 +1,5 @@
 - name: Set XFCE Wallpaper for ALL Users (Enterprise Ready)
-  hosts: DPDYPHGFUN10389
+  hosts: ansibletesting
   become: yes
   gather_facts: false
 
