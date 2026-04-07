@@ -1,5 +1,5 @@
 - name: Set XFCE Wallpaper for ALL Users (Enterprise Ready)
-  hosts: Batch8
+  hosts: DMDUCC11DOC0005, TMDUCC11DOC0004, DMDUCC11DOC0006, TMDUCC11INV0007, DMDUCCITYREF001, TMDUCCGFREF0002
   become: yes
   gather_facts: false
 
