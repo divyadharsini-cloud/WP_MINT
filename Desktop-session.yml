@@ -1,5 +1,5 @@
 - name: Detect Desktop Environment (Process Based)
-  hosts: Batch11
+  hosts: Batch-11
   become: yes
   gather_facts: false
 
