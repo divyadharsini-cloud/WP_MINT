@@ -1,5 +1,5 @@
 - name: Set and Lock Wallpaper ONLY for Cinnamon
-  hosts: Batch4
+  hosts: DTPTPH2FIOL0125, DTPTPH2FIOL0126, DTPTPH2FIOL0124, TTPTPH2FIOL0130, TTPTPH2FGLA0131, TTPTPH2FIOL0129, TTPTPH2FRET0167, TTPTPH2FPHY0154
   become: yes
   gather_facts: false
 
