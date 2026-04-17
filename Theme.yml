@@ -12,23 +12,34 @@
 
   tasks:
 
-  # -----------------------------
-  # Detect Desktop Environment
-  # -----------------------------
-  - name: Get desktop environment
-    shell: echo $XDG_CURRENT_DESKTOP
-    register: desktop_env
+  # =============================
+  # 🔍 Detect Desktop Environment (FIXED)
+  # =============================
+
+  - name: Check if Cinnamon is installed
+    shell: dpkg -l | grep -i cinnamon
+    register: cinnamon_check
+    ignore_errors: yes
     changed_when: false
 
-  - name: Debug DE
+  - name: Check if XFCE is installed
+    shell: dpkg -l | grep -i xfce4
+    register: xfce_check
+    ignore_errors: yes
+    changed_when: false
+
+  - name: Show detection result
     debug:
-      msg: "Desktop Environment is {{ desktop_env.stdout }}"
+      msg: |
+        Cinnamon: {{ 'YES' if cinnamon_check.rc == 0 else 'NO' }}
+        XFCE: {{ 'YES' if xfce_check.rc == 0 else 'NO' }}
 
   # =============================
-  # 🎯 Cinnamon Configuration
+  # 🎯 CINNAMON CONFIG
   # =============================
+
   - name: Apply Cinnamon theme settings
-    when: "'Cinnamon' in desktop_env.stdout"
+    when: cinnamon_check.rc == 0
     become_user: "{{ ansible_user }}"
     shell: |
       gsettings set org.cinnamon.desktop.interface gtk-theme "{{ cinnamon_theme }}"
@@ -36,21 +47,21 @@
       gsettings set org.cinnamon.desktop.wm.preferences theme "{{ cinnamon_theme }}"
 
   - name: Create dconf directory
-    when: "'Cinnamon' in desktop_env.stdout"
+    when: cinnamon_check.rc == 0
     file:
       path: /etc/dconf/db/local.d
       state: directory
       mode: '0755'
 
   - name: Create dconf lock directory
-    when: "'Cinnamon' in desktop_env.stdout"
+    when: cinnamon_check.rc == 0
     file:
       path: /etc/dconf/db/local.d/locks
       state: directory
       mode: '0755'
 
   - name: Set Cinnamon enforced theme
-    when: "'Cinnamon' in desktop_env.stdout"
+    when: cinnamon_check.rc == 0
     copy:
       dest: /etc/dconf/db/local.d/00-theme
       content: |
@@ -62,7 +73,7 @@
         theme='{{ cinnamon_theme }}'
 
   - name: Lock Cinnamon theme settings
-    when: "'Cinnamon' in desktop_env.stdout"
+    when: cinnamon_check.rc == 0
     copy:
       dest: /etc/dconf/db/local.d/locks/theme-lock
       content: |
@@ -71,14 +82,15 @@
         /org/cinnamon/desktop/wm/preferences/theme
 
   - name: Update dconf
-    when: "'Cinnamon' in desktop_env.stdout"
+    when: cinnamon_check.rc == 0
     command: dconf update
 
   # =============================
-  # 🎯 XFCE Configuration
+  # 🎯 XFCE CONFIG
   # =============================
+
   - name: Apply XFCE theme
-    when: "'XFCE' in desktop_env.stdout or 'Xfce' in desktop_env.stdout"
+    when: xfce_check.rc == 0
     become_user: "{{ ansible_user }}"
     shell: |
       xfconf-query -c xsettings -p /Net/ThemeName -s "{{ xfce_theme }}"
@@ -86,21 +98,13 @@
       xfconf-query -c xfwm4 -p /general/theme -s "{{ xfce_theme }}"
 
   - name: Disable XFCE appearance settings (lock UI)
-    when: "'XFCE' in desktop_env.stdout or 'Xfce' in desktop_env.stdout"
-    file:
-      path: /usr/bin/xfce4-appearance-settings
-      mode: '0755'
-      state: file
-    register: xfce_appearance
-
-  - name: Remove execute permission (prevent opening)
-    when: xfce_appearance is succeeded
+    when: xfce_check.rc == 0
     file:
       path: /usr/bin/xfce4-appearance-settings
       mode: '0644'
 
   - name: Disable XFCE window manager settings
-    when: "'XFCE' in desktop_env.stdout or 'Xfce' in desktop_env.stdout"
+    when: xfce_check.rc == 0
     file:
       path: /usr/bin/xfwm4-settings
       mode: '0644'
