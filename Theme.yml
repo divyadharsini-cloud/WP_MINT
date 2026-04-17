@@ -7,13 +7,11 @@
   vars:
     cinnamon_theme: "Mint-Y-Dark"
     cinnamon_icons: "Mint-Y"
-    xfce_theme: "Adwaita-dark"
-    xfce_icons: "Papirus"
 
   tasks:
 
   # =============================
-  # 🔍 Detect Desktop Environment (FIXED)
+  # Detect Desktop Environment
   # =============================
 
   - name: Check if Cinnamon is installed
@@ -35,16 +33,8 @@
         XFCE: {{ 'YES' if xfce_check.rc == 0 else 'NO' }}
 
   # =============================
-  # 🎯 CINNAMON CONFIG
+  # 🎯 CINNAMON (FULL LOCK ✅)
   # =============================
-
-  - name: Apply Cinnamon theme settings
-    when: cinnamon_check.rc == 0
-    become_user: "{{ ansible_user }}"
-    shell: |
-      gsettings set org.cinnamon.desktop.interface gtk-theme "{{ cinnamon_theme }}"
-      gsettings set org.cinnamon.desktop.interface icon-theme "{{ cinnamon_icons }}"
-      gsettings set org.cinnamon.desktop.wm.preferences theme "{{ cinnamon_theme }}"
 
   - name: Create dconf directory
     when: cinnamon_check.rc == 0
@@ -86,18 +76,10 @@
     command: dconf update
 
   # =============================
-  # 🎯 XFCE CONFIG
+  # 🎯 XFCE (RESTRICTION ⚠️)
   # =============================
 
-  - name: Apply XFCE theme
-    when: xfce_check.rc == 0
-    become_user: "{{ ansible_user }}"
-    shell: |
-      xfconf-query -c xsettings -p /Net/ThemeName -s "{{ xfce_theme }}"
-      xfconf-query -c xsettings -p /Net/IconThemeName -s "{{ xfce_icons }}"
-      xfconf-query -c xfwm4 -p /general/theme -s "{{ xfce_theme }}"
-
-  - name: Disable XFCE appearance settings (lock UI)
+  - name: Disable XFCE appearance settings
     when: xfce_check.rc == 0
     file:
       path: /usr/bin/xfce4-appearance-settings
