@@ -90,7 +90,7 @@
 
         [org/cinnamon]
         enable-animations=false
-        enabled-extensions=@as[]
+        enabled-extensions=@as []
 
   # =============================
   # 🔒 Lock ALL settings
