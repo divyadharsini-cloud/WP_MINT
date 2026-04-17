@@ -1,6 +1,6 @@
 ---
 - name: Enforce Theme Restrictions (Cinnamon + XFCE)
-  hosts: DMDUCC15MELDR12
+  hosts: DMDUMLREMRTR003
   become: yes
   gather_facts: yes
 
