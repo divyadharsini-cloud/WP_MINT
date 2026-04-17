@@ -1,6 +1,6 @@
 ---
 - name: Enforce Theme Restrictions (Cinnamon + XFCE - Full Lock)
-  hosts: DMDUPH1FIOL0185
+  hosts: ansibletesting
   become: yes
   gather_facts: yes
 
