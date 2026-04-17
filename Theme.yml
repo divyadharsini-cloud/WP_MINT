@@ -1,6 +1,6 @@
 ---
-- name: Enforce Theme Restrictions (Cinnamon + XFCE)
-  hosts: DMDUPH1FIOL0185
+- name: Enforce Theme Restrictions (Cinnamon + XFCE - Full Lock)
+  hosts: ansibletesting
   become: yes
   gather_facts: yes
 
@@ -33,7 +33,20 @@
         XFCE: {{ 'YES' if xfce_check.rc == 0 else 'NO' }}
 
   # =============================
-  # 🎯 CINNAMON (FULL LOCK ✅)
+  # 🔧 Ensure dconf profile (IMPORTANT)
+  # =============================
+
+  - name: Ensure dconf profile exists
+    when: cinnamon_check.rc == 0
+    copy:
+      dest: /etc/dconf/profile/user
+      content: |
+        user-db:user
+        system-db:local
+      mode: '0644'
+
+  # =============================
+  # 📁 Create dconf directories
   # =============================
 
   - name: Create dconf directory
@@ -50,7 +63,11 @@
       state: directory
       mode: '0755'
 
-  - name: Set Cinnamon enforced theme
+  # =============================
+  # 🎯 Apply FULL Theme Enforcement
+  # =============================
+
+  - name: Set Cinnamon + GNOME enforced theme
     when: cinnamon_check.rc == 0
     copy:
       dest: /etc/dconf/db/local.d/00-theme
@@ -62,7 +79,24 @@
         [org/cinnamon/desktop/wm/preferences]
         theme='{{ cinnamon_theme }}'
 
-  - name: Lock Cinnamon theme settings
+        [org/gnome/desktop/interface]
+        gtk-theme='{{ cinnamon_theme }}'
+        icon-theme='{{ cinnamon_icons }}'
+        cursor-theme='DMZ-White'
+        color-scheme='prefer-dark'
+        font-name='Ubuntu 10'
+        document-font-name='Ubuntu 10'
+        monospace-font-name='Ubuntu Mono 10'
+
+        [org/cinnamon]
+        enable-animations=false
+        enabled-extensions=[]
+
+  # =============================
+  # 🔒 Lock ALL settings
+  # =============================
+
+  - name: Lock all theme settings
     when: cinnamon_check.rc == 0
     copy:
       dest: /etc/dconf/db/local.d/locks/theme-lock
@@ -71,12 +105,27 @@
         /org/cinnamon/desktop/interface/icon-theme
         /org/cinnamon/desktop/wm/preferences/theme
 
+        /org/gnome/desktop/interface/gtk-theme
+        /org/gnome/desktop/interface/icon-theme
+        /org/gnome/desktop/interface/cursor-theme
+        /org/gnome/desktop/interface/color-scheme
+        /org/gnome/desktop/interface/font-name
+        /org/gnome/desktop/interface/document-font-name
+        /org/gnome/desktop/interface/monospace-font-name
+
+        /org/cinnamon/enable-animations
+        /org/cinnamon/enabled-extensions
+
+  # =============================
+  # 🔄 Apply dconf changes
+  # =============================
+
   - name: Update dconf
     when: cinnamon_check.rc == 0
     command: dconf update
 
   # =============================
-  # 🎯 XFCE (RESTRICTION ⚠️)
+  # 🟡 XFCE Restriction (Partial)
   # =============================
 
   - name: Disable XFCE appearance settings
