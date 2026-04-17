@@ -1,6 +1,6 @@
 ---
 - name: Enforce Theme Restrictions (Cinnamon + XFCE)
-  hosts: ansibletesting
+  hosts: DMDUCC15MELDR12
   become: yes
   gather_facts: yes
 
