@@ -1,0 +1,76 @@
+---
+- name: Enforce Cinnamon Theme Restrictions
+  hosts: Batch1
+  become: yes
+  gather_facts: no
+
+  vars:
+    cinnamon_theme: "Mint-Y-Dark"
+    cinnamon_icons: "Mint-Y"
+
+  tasks:
+
+    # =============================
+    # 🔍 Detect Cinnamon Installed
+    # =============================
+
+    - name: Check Cinnamon fully installed
+      shell: dpkg -l | grep -w cinnamon-session
+      register: cinnamon_check
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Show Cinnamon detection result
+      debug:
+        msg: "Cinnamon: {{ 'YES' if cinnamon_check.rc == 0 else 'NO' }}"
+
+    # =============================
+    # 🔵 CINNAMON CONFIGURATION
+    # =============================
+
+    - name: Ensure dconf profile exists
+      when: cinnamon_check.rc == 0
+      copy:
+        dest: /etc/dconf/profile/user
+        mode: '0644'
+        content: |
+          user-db:user
+          system-db:local
+
+    - name: Create dconf database directory
+      when: cinnamon_check.rc == 0
+      file:
+        path: /etc/dconf/db/local.d
+        state: directory
+        mode: '0755'
+
+    - name: Set Cinnamon theme
+      when: cinnamon_check.rc == 0
+      copy:
+        dest: /etc/dconf/db/local.d/00-theme
+        mode: '0644'
+        content: |
+          [org/cinnamon/desktop/interface]
+          gtk-theme='{{ cinnamon_theme }}'
+          icon-theme='{{ cinnamon_icons }}'
+
+          [org/cinnamon/desktop/wm/preferences]
+          theme='{{ cinnamon_theme }}'
+
+          [org/cinnamon/theme]
+          name='{{ cinnamon_theme }}'
+
+    - name: Lock Cinnamon theme settings
+      when: cinnamon_check.rc == 0
+      copy:
+        dest: /etc/dconf/db/local.d/locks/theme-lock
+        mode: '0644'
+        content: |
+          /org/cinnamon/desktop/interface/gtk-theme
+          /org/cinnamon/desktop/interface/icon-theme
+          /org/cinnamon/desktop/wm/preferences/theme
+          /org/cinnamon/theme/name
+
+    - name: Apply dconf changes
+      when: cinnamon_check.rc == 0
+      command: dconf update
