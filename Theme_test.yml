@@ -28,9 +28,9 @@
 
   - name: Show detection result
     debug:
-    msg: |
-      Cinnamon: {{ 'YES' if cinnamon_check.rc == 0 else 'NO' }}
-      XFCE: {{ 'YES' if xfce_check.rc == 0 else 'NO' }}
+     msg: |
+       Cinnamon: {{ 'YES' if cinnamon_check.rc == 0 else 'NO' }}
+       XFCE: {{ 'YES' if xfce_check.rc == 0 else 'NO' }}
 
 
   # =============================
