@@ -1,6 +1,6 @@
 ---
 - name: Enforce Theme Restrictions (Cinnamon + XFCE)
-  hosts: TMDULB3FAUROZAB
+  hosts: Test-Batch1
   become: yes
   gather_facts: yes
 
