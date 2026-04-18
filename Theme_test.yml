@@ -1,0 +1,94 @@
+---
+- name: Enforce Theme Restrictions (Cinnamon + XFCE)
+  hosts: ansibletesting
+  become: yes
+  gather_facts: yes
+
+  vars:
+    cinnamon_theme: "Mint-Y-Dark"
+    cinnamon_icons: "Mint-Y"
+
+  tasks:
+
+  # =============================
+  # 🔍 Detect Desktop Environments
+  # =============================
+
+  - name: Check Cinnamon installed
+    shell: dpkg -l | grep -i cinnamon
+    register: cinnamon_check
+    ignore_errors: yes
+    changed_when: false
+
+  - name: Check XFCE installed
+    shell: dpkg -l | grep -i xfce4
+    register: xfce_check
+    ignore_errors: yes
+    changed_when: false
+
+  # =============================
+  # 🔵 CINNAMON BLOCK
+  # =============================
+
+  - name: Ensure dconf profile exists
+    when: cinnamon_check.rc == 0
+    copy:
+      dest: /etc/dconf/profile/user
+      mode: '0644'
+      content: |
+        user-db:user
+        system-db:local
+
+  - name: Create dconf database directory
+    when: cinnamon_check.rc == 0
+    file:
+      path: /etc/dconf/db/local.d
+      state: directory
+      mode: '0755'
+
+  - name: Set Cinnamon theme
+    when: cinnamon_check.rc == 0
+    copy:
+      dest: /etc/dconf/db/local.d/00-theme
+      mode: '0644'
+      content: |
+        [org/cinnamon/desktop/interface]
+        gtk-theme='{{ cinnamon_theme }}'
+        icon-theme='{{ cinnamon_icons }}'
+
+        [org/cinnamon/desktop/wm/preferences]
+        theme='{{ cinnamon_theme }}'
+
+        [org/cinnamon/theme]
+        name='{{ cinnamon_theme }}'
+
+  - name: Lock Cinnamon theme settings
+    when: cinnamon_check.rc == 0
+    copy:
+      dest: /etc/dconf/db/local.d/locks/theme-lock
+      mode: '0644'
+      content: |
+        /org/cinnamon/desktop/interface/gtk-theme
+        /org/cinnamon/desktop/interface/icon-theme
+        /org/cinnamon/desktop/wm/preferences/theme
+        /org/cinnamon/theme/name
+
+  - name: Apply dconf changes
+    when: cinnamon_check.rc == 0
+    command: dconf update
+
+  # =============================
+  # 🟡 XFCE BLOCK (YOUR METHOD ONLY)
+  # =============================
+
+  - name: Disable XFCE appearance settings
+    when: xfce_check.rc == 0
+    file:
+      path: /usr/bin/xfce4-appearance-settings
+      mode: '0644'
+
+  - name: Disable XFCE window manager settings
+    when: xfce_check.rc == 0
+    file:
+      path: /usr/bin/xfwm4-settings
+      mode: '0644'
