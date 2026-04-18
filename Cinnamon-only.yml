@@ -59,7 +59,7 @@
             content: |
               [org/cinnamon/desktop/background]
               picture-uri='file://{{ wallpaper_path }}'
-              picture-options='zoom'
+              picture-options='scaled'
 
         - name: Lock Cinnamon wallpaper
           copy:
