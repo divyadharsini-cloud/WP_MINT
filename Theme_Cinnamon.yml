@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: ansibletesting
+  hosts: DTNJPHGFUN20045
   become: yes
   gather_facts: no
 
