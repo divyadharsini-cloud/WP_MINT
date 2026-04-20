@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: Batch1
+  hosts: Batch2
   become: yes
   gather_facts: no
 
