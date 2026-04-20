@@ -1,6 +1,6 @@
 ---
 - name: Enforce XFCE Theme Restrictions
-  hosts: Unit-2&3
+  hosts: Test-batch1
   become: yes
   gather_facts: no
 
