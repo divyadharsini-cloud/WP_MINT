@@ -1,6 +1,6 @@
 ---
 - name: Enforce XFCE Theme Restrictions
-  hosts: Batch6
+  hosts: Batch8
   become: yes
   gather_facts: no
 
