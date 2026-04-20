@@ -1,5 +1,5 @@
 - name: Set XFCE Wallpaper for ALL Users (Enterprise Ready)
-  hosts: FH-pdy
+  hosts: Batch5
   become: yes
   gather_facts: false
 
