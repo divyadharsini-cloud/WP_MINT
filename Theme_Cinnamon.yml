@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: DTNJPHGFUN20045
+  hosts: Batch1
   become: yes
   gather_facts: no
 
