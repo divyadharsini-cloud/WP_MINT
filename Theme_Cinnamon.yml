@@ -5,8 +5,8 @@
   gather_facts: no
 
   vars:
-    cinnamon_theme: "Mint-Y-Dark"
-    cinnamon_icons: "Mint-Y"
+    cinnamon_theme: "cinnamon"
+    cinnamon_icons: "Mint-Y-Sand"
 
   tasks:
 
