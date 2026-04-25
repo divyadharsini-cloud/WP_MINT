@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: SNKL-1
+  hosts: Kovilpatti
   become: yes
   gather_facts: no
 
