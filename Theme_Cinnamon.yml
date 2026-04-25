@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: Cornea-op
+  hosts: Glaucoma-op
   become: yes
   gather_facts: no
 
