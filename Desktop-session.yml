@@ -1,5 +1,5 @@
 - name: Detect Desktop Environment (Process Based)
-  hosts: Tirumangalam
+  hosts: linux_servers
   become: yes
   gather_facts: false
 
