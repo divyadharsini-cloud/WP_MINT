@@ -1,5 +1,5 @@
 - name: Detect Desktop Environment (Process Based)
-  hosts: DTNJPHGFCOU0188, DTNJPH1FRET0153, DTNJPHGFADM0137, DTNJPHGFADM0132, DTNJPHGFUN20141, DTNJFHGFINV0154
+  hosts: Melur
   become: yes
   gather_facts: false
 
