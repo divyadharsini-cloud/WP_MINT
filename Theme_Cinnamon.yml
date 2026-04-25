@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: IP
+  hosts: Cornea-op
   become: yes
   gather_facts: no
 
