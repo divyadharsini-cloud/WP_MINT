@@ -1,5 +1,5 @@
 - name: Detect Desktop Environment (Process Based)
-  hosts: SNKL-1
+  hosts: Kovilpatti
   become: yes
   gather_facts: false
 
