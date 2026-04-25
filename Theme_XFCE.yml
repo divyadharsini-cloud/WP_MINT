@@ -1,6 +1,6 @@
 ---
 - name: Enforce XFCE Theme Restrictions
-  hosts: linux_servers
+  hosts: OP-2, DMDUPH1FIOL0225, DMDUPH1FOPTI001, DMDUPH1FPED0010
   become: yes
   gather_facts: no
 
