@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: OP-1
+  hosts: DMDUPH1FPED0041, DMDUPH1FPED0041, DMDUPH1FPHY0030, DMDUPH1FPHY0144, TMDUPH1FIOL0005, DMDUPH1FPHY0162, TMDUPH1FPED0019, TMDUPH1FPED0015
   become: yes
   gather_facts: no
 
