@@ -1,6 +1,6 @@
 ---
 - name: Enforce XFCE Theme Restrictions
-  hosts: Batch8
+  hosts: DMDUCC14TMM0002, DMDUCC14TMM0008
   become: yes
   gather_facts: no
 
