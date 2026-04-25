@@ -1,5 +1,5 @@
 - name: Set and Lock Wallpaper ONLY for Cinnamon
-  hosts: Melur
+  hosts: DMDUCC14TMM0001, DMDUCC14TMM0005, DMDUCC14TMM0024
   become: yes
   gather_facts: false
 
