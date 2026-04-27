@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: Kovilpatti
+  hosts: TUT-1
   become: yes
   gather_facts: no
 
