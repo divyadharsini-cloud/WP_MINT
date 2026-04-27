@@ -1,5 +1,5 @@
 - name: Detect Desktop Environment (Process Based)
-  hosts: Kovilpatti
+  hosts: TUT-1
   become: yes
   gather_facts: false
 
