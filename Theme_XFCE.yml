@@ -1,6 +1,6 @@
 ---
 - name: Enforce XFCE Theme Restrictions
-  hosts: DPDYPHGFIOL0044, DPDYPHGFIOL0040, DPDYPHGFIOL0095, DPDYPHGFPED0575
+  hosts: DPDYFHGFASC0004, DPDYFH2FWAR0126, DPDYFHGFSPR562
   become: yes
   gather_facts: no
 
