@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: TUT-1
+  hosts: DTNJPHGFUN10017, DTNJPHGFUN10033
   become: yes
   gather_facts: no
 
