@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: TTPTPH2FRET0167
+  hosts: GF-1
   become: yes
   gather_facts: no
 
