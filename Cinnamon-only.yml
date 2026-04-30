@@ -1,5 +1,5 @@
 - name: Set and Lock Wallpaper ONLY for Cinnamon
-  hosts: FH-2
+  hosts: DMDUPH1FPAE0213, DMDUPH1FPAE0234, DMDUPH1FPHY0007, DMDUPH1FPAE2380, DMDUPH1FIOL0186, TMDUPH1FMYOPIA1
   become: yes
   gather_facts: false
 
