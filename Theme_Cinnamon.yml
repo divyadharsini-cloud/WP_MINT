@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: FH-1
+  hosts: FH-2
   become: yes
   gather_facts: no
 
