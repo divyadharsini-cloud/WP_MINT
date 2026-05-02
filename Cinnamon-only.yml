@@ -1,5 +1,5 @@
 - name: Set and Lock Wallpaper ONLY for Cinnamon
-  hosts: DTNJPHGFUN10012, DTNJFHGFOPT0116
+  hosts: DTNJPH3FWAR0097, TTNJPHGFUN20054
   become: yes
   gather_facts: false
 
