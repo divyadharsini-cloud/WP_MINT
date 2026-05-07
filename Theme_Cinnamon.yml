@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: DPDYPH1FNEU0653, DPDYPH1FUVA0655
+  hosts: DTNJPH1FGLA0149, DTNJPH1FGLA0167, DTNJPH1FGLA0143
   become: yes
   gather_facts: no
 
