@@ -1,6 +1,6 @@
 ---
 - name: Enforce XFCE Theme Restrictions
-  hosts: DTVLPH1FGLA0183, TTVLFHGFCOU0163, TTVLPH1FGLA0014, TTVLPH1FGLA0068, TTVLPH1FGLA0178, TTVLPHGFGLA0067
+  hosts: TTVLPH1FGLA0059
   become: yes
   gather_facts: no
 
