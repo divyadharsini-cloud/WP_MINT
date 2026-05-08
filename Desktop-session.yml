@@ -1,5 +1,5 @@
 - name: Detect Desktop Environment (Process Based)
-  hosts: DTVLPH2FRET0194, TTVLIP5FTHE0141, TTVLPHGFCOR0011, TTVLPH3FRET0042
+  hosts: Glaucoma
   become: yes
   gather_facts: false
 
