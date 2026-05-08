@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: DTNJPHGFPHY0165
+  hosts: Glaucoma
   become: yes
   gather_facts: no
 
