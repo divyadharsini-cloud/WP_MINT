@@ -1,5 +1,5 @@
 - name: Detect Desktop Environment (Process Based)
-  hosts: Glaucoma
+  hosts: IOL
   become: yes
   gather_facts: false
 
