@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: Glaucoma
+  hosts: IOL
   become: yes
   gather_facts: no
 
