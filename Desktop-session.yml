@@ -1,5 +1,5 @@
 - name: Detect Desktop Environment (Process Based)
-  hosts: IOL
+  hosts: PAE
   become: yes
   gather_facts: false
 
