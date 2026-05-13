@@ -1,5 +1,5 @@
 - name: Set and Lock Wallpaper ONLY for Cinnamon
-  hosts: Unit-1-4
+  hosts: Unit-2-3
   become: yes
   gather_facts: false
 
