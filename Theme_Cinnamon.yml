@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: Batch-3
+  hosts: THNGFITRM000506
   become: yes
   gather_facts: no
 
