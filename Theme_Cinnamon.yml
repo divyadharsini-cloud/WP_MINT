@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: UDP
+  hosts: CC
   become: yes
   gather_facts: no
 
