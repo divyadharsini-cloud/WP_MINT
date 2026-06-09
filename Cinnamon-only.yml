@@ -1,10 +1,10 @@
 - name: Set and Lock Wallpaper ONLY for Cinnamon
-  hosts: DPDYFHGFDRE0768, DPDYFHGFDRE0769, DPDYFHGFINV0771, DPDYFHGFREF0772, DPDYFHGFREF0773, DPDYFHGFSIV0774
+  hosts: ansibletesting
   become: yes
   gather_facts: false
 
   vars:
-    wallpaper_src: "Desktop_Wallpaper_Week_27.jpg"
+    wallpaper_src: "Desktop_Wallpaper_Week_28.jpg"
     wallpaper_path: "/usr/share/mywallpapers/Test.jpg"
 
   tasks:
