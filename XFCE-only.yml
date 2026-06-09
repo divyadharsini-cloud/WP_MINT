@@ -1,5 +1,5 @@
 - name: Set XFCE Wallpaper for ALL Users (Enterprise Ready)
-  hosts: Batch5
+  hosts: Batch6
   become: yes
   gather_facts: false
 
