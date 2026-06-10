@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: UN-1
+  hosts: UN-2
   become: yes
   gather_facts: no
 
