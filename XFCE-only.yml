@@ -1,5 +1,5 @@
 - name: Set XFCE Wallpaper for ALL Users (Enterprise Ready)
-  hosts: Tirumangalam
+  hosts: DMDUCCITYREF001, TMDUCCGFREF0002
   become: yes
   gather_facts: false
 
