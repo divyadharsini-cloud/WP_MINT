@@ -1,5 +1,5 @@
 - name: Set and Lock Wallpaper ONLY for Cinnamon
-  hosts: OP-1, OP-2
+  hosts: Cornea-op, Glaucoma-op
   become: yes
   gather_facts: false
 
