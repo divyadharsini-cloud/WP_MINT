@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: IOL
+  hosts: VIP
   become: yes
   gather_facts: no
 
