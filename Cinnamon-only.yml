@@ -1,5 +1,5 @@
 - name: Set and Lock Wallpaper ONLY for Cinnamon
-  hosts: VIP
+  hosts: GF-1, GF-2
   become: yes
   gather_facts: false
 
