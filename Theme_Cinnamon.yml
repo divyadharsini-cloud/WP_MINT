@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: old, new
+  hosts: PAE
   become: yes
   gather_facts: no
 
