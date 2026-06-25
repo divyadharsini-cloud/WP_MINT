@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: PAE
+  hosts: DSLMFHGFINVEST1, DSLMFHGFREF0004
   become: yes
   gather_facts: no
 
