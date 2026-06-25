@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: DSLMFHGFINVEST1, DSLMFHGFREF0004
+  hosts: DSLMPH1FRETMRD1
   become: yes
   gather_facts: no
 
