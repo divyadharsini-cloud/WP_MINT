@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: Cor
+  hosts: DTNJFH2FDCR0124
   become: yes
   gather_facts: no
 
