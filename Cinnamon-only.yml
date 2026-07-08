@@ -1,5 +1,5 @@
 - name: Set and Lock Wallpaper ONLY for Cinnamon
-  hosts: DTNJFH2FDCR0124
+  hosts: MRD-OPtical-OP(THN)
   become: yes
   gather_facts: false
 
