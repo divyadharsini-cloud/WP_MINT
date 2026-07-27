@@ -1,6 +1,6 @@
 ---
 - name: Enforce Cinnamon Theme Restrictions
-  hosts: old
+  hosts: DSLMPHGFGLAINV1, DSLMFHGFDOCTOR3
   become: yes
   gather_facts: no
 
