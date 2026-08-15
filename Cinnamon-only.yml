@@ -1,5 +1,5 @@
 - name: Set and Lock Wallpaper ONLY for Cinnamon
-  hosts: old
+  hosts: old, Old
   become: yes
   gather_facts: false
 
