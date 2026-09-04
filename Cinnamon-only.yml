@@ -1,5 +1,5 @@
 - name: Set and Lock Wallpaper ONLY for Cinnamon
-  hosts: old, new
+  hosts: DTNJPHGFUN20191, DTNJPH2FWAR0135, DTNJPH2FWAR0194, DTNJPH2FWAR0144, DTNJPH2FWAR0158, DTNJPH2FMRD0136 
   become: yes
   gather_facts: false
 
