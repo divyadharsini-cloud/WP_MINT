@@ -1,5 +1,5 @@
 - name: Set XFCE Wallpaper for ALL Users (Enterprise Ready)
-  hosts: TCBEPHBSPAED075, TCBEPHBSSPRR120
+  hosts: TCBEPHGFITSY043, TCBEPH1FIOLI148, TCBEPHGFSPRR105, TCBEPH1FIOLR157, TCBEPHBSSPRR018
   become: yes
   gather_facts: false
 
