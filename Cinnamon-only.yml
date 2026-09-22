@@ -1,5 +1,5 @@
 - name: Set and Lock Wallpaper ONLY for Cinnamon
-  hosts: new, old
+  hosts: DSLMPHGFCALCTR2, DSLMSELECTRICAL, DSLMPHGFMRDREG1, DSLMPH2FPAYWARD, DSLMPH1FRETDOC2, DSLMPH1FGLACOUN
   become: yes
   gather_facts: false
 
