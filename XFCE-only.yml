@@ -1,10 +1,10 @@
 - name: Set XFCE Wallpaper for ALL Users (Enterprise Ready)
-  hosts: DMDUPHUGTELDOC5, TMDUPHUGU3INVES, TMDUPHUGU3REF04, TMDUPHUG3UREF05, TMDUPHUGCON0014, TMDUPHUGU3REF02, TMDUPHUGREF0006
+  hosts: old, new
   become: yes
   gather_facts: false
 
   vars:
-    wallpaper_src: "Desktop_Wallpaper_Week_30.jpg"
+    wallpaper_src: "Desktop_Wallpaper_Week_31.jpg"
     wallpaper_path: "/usr/share/mywallpapers/Test.jpg"
 
   tasks:
